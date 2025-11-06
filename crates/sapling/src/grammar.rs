@@ -17,7 +17,7 @@ use std::collections::HashMap;
 /// both syntactic and semantic scaffolding (rules, precedence, conflicts,
 /// and contextual hints) that together define a language's formal structure.
 ///
-/// See https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json
+/// See <https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json>
 #[derive(Debug, Clone, Facet)]
 pub struct Grammar {
     /// Optional `$schema` field from the JSON, typically used for schema
@@ -208,8 +208,8 @@ pub enum GrammarError {
 impl std::fmt::Display for GrammarError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            GrammarError::JsonParse(e) => write!(f, "JSON parse error: {}", e),
-            GrammarError::Validation(msg) => write!(f, "validation error: {}", msg),
+            GrammarError::JsonParse(e) => write!(f, "JSON parse error: {e}"),
+            GrammarError::Validation(msg) => write!(f, "validation error: {msg}"),
         }
     }
 }
@@ -218,6 +218,7 @@ impl std::error::Error for GrammarError {}
 
 impl Rule {
     /// Returns the canonical string name of this rule type.
+    #[must_use]
     pub fn type_name(&self) -> &'static str {
         match self.rule_type {
             RuleType::Blank => "BLANK",
@@ -241,16 +242,19 @@ impl Rule {
     }
 
     /// Returns `true` if this rule represents a terminal (lexical) token.
+    #[must_use]
     pub fn is_terminal(&self) -> bool {
         matches!(self.rule_type, RuleType::String | RuleType::Pattern)
     }
 
     /// Returns `true` if this rule is a symbol reference.
+    #[must_use]
     pub fn is_symbol(&self) -> bool {
         matches!(self.rule_type, RuleType::Symbol)
     }
 
     /// Returns the referenced symbol name, if applicable.
+    #[must_use]
     pub fn symbol_name(&self) -> Option<&str> {
         if self.is_symbol() {
             self.name.as_deref()
@@ -260,12 +264,13 @@ impl Rule {
     }
 
     /// Returns the numeric precedence value if this rule is a precedence wrapper.
+    #[must_use]
     pub fn precedence(&self) -> Option<i32> {
         match self.rule_type {
             RuleType::Prec | RuleType::PrecLeft | RuleType::PrecRight | RuleType::PrecDynamic => {
                 self.value.as_ref().and_then(|v| match v {
                     RuleValue::Integer(i) => Some(*i),
-                    _ => None,
+                    RuleValue::String(_) => None,
                 })
             }
             _ => None,
@@ -273,11 +278,12 @@ impl Rule {
     }
 
     /// Returns the literal string value if this is a `STRING` rule.
+    #[must_use]
     pub fn string_value(&self) -> Option<&str> {
         if matches!(self.rule_type, RuleType::String) {
             self.value.as_ref().and_then(|v| match v {
                 RuleValue::String(s) => Some(s.as_str()),
-                _ => None,
+                RuleValue::Integer(_) => None,
             })
         } else {
             None
@@ -285,11 +291,12 @@ impl Rule {
     }
 
     /// Returns the pattern source if this is a `PATTERN` rule.
+    #[must_use]
     pub fn pattern_value(&self) -> Option<&str> {
         if matches!(self.rule_type, RuleType::Pattern) {
             self.value.as_ref().and_then(|v| match v {
                 RuleValue::String(s) => Some(s.as_str()),
-                _ => None,
+                RuleValue::Integer(_) => None,
             })
         } else {
             None

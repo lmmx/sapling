@@ -46,10 +46,10 @@ pub fn validate(grammar: &Grammar) -> Result<(), ValidationError> {
     check_unreachable_rules(grammar)?;
 
     // Detect problematic left recursion
-    check_left_recursion(grammar)?;
+    check_left_recursion(grammar);
 
     // Validate precedence usage
-    check_precedence(grammar)?;
+    check_precedence(grammar);
 
     Ok(())
 }
@@ -74,8 +74,7 @@ fn check_rule_symbols(
             if let Some(name) = &rule.name {
                 if !defined.contains(name) {
                     return Err(ValidationError::new(format!(
-                        "undefined symbol '{}' referenced in rule '{}'",
-                        name, context
+                        "undefined symbol '{name}' referenced in rule '{context}'"
                     )));
                 }
             }
@@ -140,10 +139,10 @@ fn check_unreachable_rules(grammar: &Grammar) -> Result<(), ValidationError> {
         let inline_contains = grammar
             .inline
             .as_ref()
-            .map_or(false, |v| v.contains(rule_name));
+            .is_some_and(|v| v.contains(rule_name));
 
         if !reachable.contains(rule_name) && !inline_contains {
-            eprintln!("warning: unreachable rule '{}'", rule_name);
+            eprintln!("warning: unreachable rule '{rule_name}'");
         }
     }
 
@@ -190,21 +189,16 @@ fn collect_referenced_symbols(rule: &Rule, symbols: &mut Vec<String>) {
     }
 }
 
-fn check_left_recursion(grammar: &Grammar) -> Result<(), ValidationError> {
+fn check_left_recursion(grammar: &Grammar) {
     // Detect immediate left recursion that lalrpop can't handle
     // lalrpop handles left recursion just fine, but we document it
 
     for (rule_name, rule) in &grammar.rules {
         if has_immediate_left_recursion(rule, rule_name) {
             // This is actually fine for lalrpop, just document it
-            eprintln!(
-                "info: rule '{}' has left recursion (handled by lalrpop)",
-                rule_name
-            );
+            eprintln!("info: rule '{rule_name}' has left recursion (handled by lalrpop)");
         }
     }
-
-    Ok(())
 }
 
 fn has_immediate_left_recursion(rule: &Rule, target: &str) -> bool {
@@ -220,8 +214,7 @@ fn has_immediate_left_recursion(rule: &Rule, target: &str) -> bool {
             if let Some(members) = &rule.members {
                 members
                     .first()
-                    .map(|first| has_immediate_left_recursion(first, target))
-                    .unwrap_or(false)
+                    .is_some_and(|first| has_immediate_left_recursion(first, target))
             } else {
                 false
             }
@@ -253,7 +246,7 @@ fn has_immediate_left_recursion(rule: &Rule, target: &str) -> bool {
     }
 }
 
-fn check_precedence(grammar: &Grammar) -> Result<(), ValidationError> {
+fn check_precedence(grammar: &Grammar) {
     // Validate that precedence is used consistently
     let mut prec_levels: HashMap<String, Vec<i32>> = HashMap::new();
 
@@ -264,14 +257,9 @@ fn check_precedence(grammar: &Grammar) -> Result<(), ValidationError> {
     // Check for conflicting precedence declarations
     for (rule, levels) in &prec_levels {
         if levels.len() > 1 {
-            eprintln!(
-                "warning: rule '{}' has multiple precedence levels: {:?}",
-                rule, levels
-            );
+            eprintln!("warning: rule '{rule}' has multiple precedence levels: {levels:?}");
         }
     }
-
-    Ok(())
 }
 
 fn collect_precedence_levels(rule: &Rule, levels: &mut HashMap<String, Vec<i32>>, context: &str) {
