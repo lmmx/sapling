@@ -22,40 +22,49 @@ use std::collections::HashMap;
 pub struct Grammar {
     /// Optional `$schema` field from the JSON, typically used for schema
     /// validation or editor integration.
-    #[facet(rename = "$schema")]
+    #[facet(default, rename = "$schema")]
     pub schema: Option<String>,
 
     /// The short name of the grammar (e.g. `"javascript"` or `"rust"`).
     pub name: String,
 
     /// Optional name of a base grammar that this one inherits from.
+    #[facet(default)]
     pub inherits: Option<String>,
 
     /// Map of all rule identifiers to their corresponding definitions.
     pub rules: HashMap<String, Rule>,
 
     /// “Extras” that may appear between other tokens, such as whitespace or comments.
+    #[facet(default)]
     pub extras: Option<Vec<Rule>>,
 
     /// Rules implemented externally via a scanner.
+    #[facet(default)]
     pub externals: Option<Vec<Rule>>,
 
     /// Names of rules that should be inlined into other rules.
+    #[facet(default)]
     pub inline: Option<Vec<String>>,
 
     /// Precedence declarations that control operator binding order.
+    #[facet(default)]
     pub precedences: Option<Vec<Vec<Precedence>>>,
 
     /// Explicit conflict groups expected during parsing.
+    #[facet(default)]
     pub conflicts: Option<Vec<Vec<String>>>,
 
     /// Context-specific reserved word definitions.
+    #[facet(default)]
     pub reserved: Option<HashMap<String, Vec<Rule>>>,
 
     /// The special rule name used to identify word tokens (keywords, identifiers, etc.).
+    #[facet(default)]
     pub word: Option<String>,
 
     /// A list of node supertypes, grouping related syntactic forms.
+    #[facet(default)]
     pub supertypes: Option<Vec<String>>,
 }
 
@@ -89,24 +98,31 @@ pub struct Rule {
     pub rule_type: RuleType,
 
     /// Optional literal or numeric value, depending on rule kind.
+    #[facet(default)]
     pub value: Option<RuleValue>,
 
     /// Optional name used by `SYMBOL`, `FIELD`, or `ALIAS` rules.
+    #[facet(default)]
     pub name: Option<String>,
 
     /// Optional nested rule for unary constructs such as `REPEAT` or `PREC`.
+    #[facet(default)]
     pub content: Option<Box<Rule>>,
 
     /// Optional list of child rules for compound constructs (`SEQ`, `CHOICE`, etc.).
+    #[facet(default)]
     pub members: Option<Vec<Rule>>,
 
     /// Whether the node produced by this rule is named.
+    #[facet(default)]
     pub named: Option<bool>,
 
     /// Internal or generator-specific modifier flags.
+    #[facet(default)]
     pub flags: Option<String>,
 
     /// Optional context label used for reserved-word handling.
+    #[facet(default)]
     pub context_name: Option<String>,
 }
 
