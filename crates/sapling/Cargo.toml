@@ -1,0 +1,63 @@
+[[bin]]
+name = "sapling"
+path = "src/cli.rs"
+required-features = ["cli"]
+
+[dependencies]
+# Optional dependencies
+# -- Facet
+facet = { version = "0.30.0" }
+facet-args = { optional = true, version = "0.30.0" }
+facet-json = { workspace = true }
+
+[package]
+authors.workspace = true
+categories = ["command-line-utilities", "development-tools"]
+description.workspace = true
+documentation = "https://docs.rs/sapling/"
+edition.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+license.workspace = true
+name = "sapling"
+readme.workspace = true
+repository.workspace = true
+rust-version = "1.90"
+version = "0.1.0"
+
+[package.metadata.binstall]
+pkg-fmt = "tgz"
+pkg-url = "https://github.com/lmmx/sapling/releases/download/sapling-v{ version }/sapling-{ target }-v{ version }.tar.gz"
+
+[package.metadata.binstall.overrides.aarch64-pc-windows-msvc]
+pkg-fmt = "zip"
+pkg-url = "https://github.com/lmmx/sapling/releases/download/sapling-v{ version }/sapling-aarch64-pc-windows-msvc-v{ version }.zip"
+
+[package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+pkg-fmt = "zip"
+pkg-url = "https://github.com/lmmx/sapling/releases/download/sapling-v{ version }/sapling-x86_64-pc-windows-msvc-v{ version }.zip"
+
+[lints.clippy]
+all = "deny"
+cargo = "deny"
+pedantic = "deny"
+
+[lints.rust]
+missing_docs = "deny"
+unsafe_code = "forbid"
+
+[features]
+# --- Dependency features
+cli = ["dep:facet-args"]
+
+[dev-dependencies]
+assert_cmd = "2.1.1"
+predicates = "3.1.3"
+tempfile = "3.23.0"
+
+[package.metadata.cargo-machete]
+ignored = []
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

@@ -1,0 +1,38 @@
+[profile.dev]
+codegen-units = 256
+debug = false
+lto = false
+opt-level = 0
+strip = "debuginfo"
+
+[profile.release]
+codegen-units = 1
+debug = false
+lto = "thin"
+opt-level = 2
+strip = "symbols"
+
+[workspace]
+members = ["crates/sapling", "crates/sapling-py"]
+resolver = "2"
+
+[workspace.dependencies]
+# Internal crates
+sapling = { path = "crates/sapling", version = "0.1.0" }
+sapling-py = { path = "crates/sapling-py", version = "0.1.0" }
+
+pyo3 = { features = ["abi3-py39", "extension-module"], version = "0.25" }
+
+facet-json = { version = "0.30.0" }
+ropey = { version = "1.6" }
+
+[workspace.package]
+authors = ["Louis Maddox <louismmx@gmail.com>"]
+description = "A syntactic patching library with char-level granularity"
+edition = "2021"
+homepage = "https://github.com/lmmx/sapling"
+keywords = ["diff", "patch", "syntax", "tree-sitter"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/lmmx/sapling"
+version = "0.1.0"

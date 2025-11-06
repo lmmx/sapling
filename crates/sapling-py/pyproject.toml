@@ -1,0 +1,48 @@
+[build-system]
+build-backend = "maturin"
+requires = ["maturin>=1.8,<2.0"]
+
+[project]
+authors = [{ email = "louismmx@gmail.com", name = "Louis Maddox" }]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Rust",
+]
+description = "Rust-native tree-sitter"
+keywords = ["parser", "syntax", "tree-sitter"]
+license = { text = "MIT" }
+name = "sapling"
+readme = "README.md"
+requires-python = ">=3.9"
+version = "0.1.0"
+
+[project.urls]
+Homepage = "https://github.com/lmmx/sapling"
+Repository = "https://github.com/lmmx/sapling"
+
+[dependency-groups]
+build = ["maturin>=1.9.3", "patchelf>=0.17.2.4"]
+dev = ["pdbpp>=0.11.7", "pdm-bump>=0.9.10", "pdm>=2.22", "pre-commit>=4.1.0"]
+test = ["pytest>=8.4.0"]
+
+[tool.ruff.lint]
+# default: select = ["E4", "E7", "E9", "F"]
+select = ["D", "E4", "E7", "E9", "F", "UP"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+module-name = "sapling._sapling"
+python-source = "python"
+
+[tool.uv]
+# Build Rust code in development mode (faster builds)
+# config-settings = { build-args = "--profile=dev" }
+default-groups = ["build", "dev", "test"]

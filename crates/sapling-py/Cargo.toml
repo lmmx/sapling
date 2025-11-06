@@ -1,0 +1,26 @@
+[package]
+authors = ["Louis Maddox <louismmx@gmail.com>"]
+categories = ["command-line-utilities", "development-tools"]
+description = "Python bindings for sapling - Rust-native tree-sitter"
+edition = "2021"
+homepage = "https://github.com/lmmx/sapling"
+keywords = ["parser", "syntax", "tree-sitter"]
+license = "MIT"
+name = "sapling-py"
+publish = false
+repository = "https://github.com/lmmx/sapling"
+version = "0.1.0"
+
+[lib]
+crate-type = ["cdylib"]
+name = "_sapling"
+
+[features]
+
+[dependencies]
+sapling = { workspace = true }
+
+pyo3.workspace = true
+
+[build-dependencies]
+pyo3-build-config = "0.22"
