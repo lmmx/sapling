@@ -111,7 +111,6 @@ mod cli_integration {
         assert_eq!(result, "<!-- start -->new content<!-- end -->");
     }
 
-    #[cfg(feature = "regex")]
     #[test]
     fn cli_applies_pattern_patch() {
         let temp = TempDir::new().unwrap();

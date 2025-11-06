@@ -1,21 +1,13 @@
-//! sapling: A syntactic patching library with char-level granularity.
+//! sapling: Rust-native tree-sitter
 //!
-//! Command-line interface for applying patches from JSON.
-//!
-//! `sapling` provides a robust way to apply patches to source files using rope data structures
-//! for efficient editing and tree-sitter for syntactic awareness. Unlike traditional line-based
-//! patch formats, sapling operates at character granularity and can compose multiple patches
-//! with automatic offset tracking.
-//!
-//! Reads a JSON array of patches from a file or stdin and applies them to their target files.
-//! Modified files are written back to disk unless `--dry-run` is specified.
+//! Command-line interface for sapling.
 #![allow(clippy::multiple_crate_versions)]
 
 /// Command-line interface for applying patches from JSON.
 #[cfg(feature = "cli")]
 pub mod inner {
     use facet::Facet;
-    use sapling::{Patch, PatchSet};
+    use sapling::Grammar;
     use std::fs;
     use std::io::{self, Read};
 
@@ -85,42 +77,36 @@ pub mod inner {
         };
 
         // Parse patches from JSON using facet
-        let patches: Vec<Patch> = facet_json::from_str(&input)
+        let _grammar: Grammar = facet_json::from_str(&input)
             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("{e:?}")))?;
 
         if args.verbose {
-            eprintln!("Loaded {} patch(es)", patches.len());
+            eprintln!("Loaded grammar");
         }
 
-        let mut set = PatchSet::new();
-        for patch in patches {
-            set.add(patch);
-        }
+        // match set.apply_to_files() {
+        //     Ok(results) => {
+        //         for (file, content) in results {
+        //             if args.dry_run {
+        //                 eprintln!("Would patch: {file}");
+        //                 if args.verbose {
+        //                     println!("=== {file} ===\n{content}");
+        //                 }
+        //             } else {
+        //                 fs::write(&file, content)?;
+        //                 eprintln!("Patched: {file}");
+        //             }
+        //         }
 
-        // Apply patches
-        match set.apply_to_files() {
-            Ok(results) => {
-                for (file, content) in results {
-                    if args.dry_run {
-                        eprintln!("Would patch: {file}");
-                        if args.verbose {
-                            println!("=== {file} ===\n{content}");
-                        }
-                    } else {
-                        fs::write(&file, content)?;
-                        eprintln!("Patched: {file}");
-                    }
-                }
-
-                if args.dry_run && !args.verbose {
-                    eprintln!("Dry run complete. Use -v to see changes.");
-                }
-            }
-            Err(e) => {
-                eprintln!("Error: {e}");
-                std::process::exit(1);
-            }
-        }
+        //         if args.dry_run && !args.verbose {
+        //             eprintln!("Dry run complete. Use -v to see changes.");
+        //         }
+        //     }
+        //     Err(e) => {
+        //         eprintln!("Error: {e}");
+        //         std::process::exit(1);
+        //     }
+        // }
 
         Ok(())
     }
