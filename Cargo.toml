@@ -28,10 +28,10 @@ ropey = { version = "1.6" }
 
 [workspace.package]
 authors = ["Louis Maddox <louismmx@gmail.com>"]
-description = "A syntactic patching library with char-level granularity"
+description = "Rust-native tree-sitter"
 edition = "2021"
 homepage = "https://github.com/lmmx/sapling"
-keywords = ["diff", "patch", "syntax", "tree-sitter"]
+keywords = ["parser", "syntax", "tree-sitter"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/lmmx/sapling"
