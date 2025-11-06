@@ -575,7 +575,6 @@ dependencies = [
 name = "sapling-py"
 version = "0.1.0"
 dependencies = [
- "facet-json",
  "pyo3",
  "pyo3-build-config 0.22.6",
  "sapling",
