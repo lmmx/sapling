@@ -1,3 +1,3 @@
-# sapling
+# 🙚 sapling
 
-🙚
+Rust-native tree-sitter
