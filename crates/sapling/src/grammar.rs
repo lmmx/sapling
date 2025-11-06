@@ -333,7 +333,15 @@ mod tests {
             }
         }"#;
 
-        let grammar = parse_grammar(json).unwrap();
+        let grammar = parse_grammar(json).unwrap_or_else(|e| {
+            if let GrammarError::JsonParse(inner) = e {
+                eprintln!("JSON parse error:\n{}", inner);
+            } else {
+                eprintln!("Grammar error: {}", e);
+            }
+            std::process::exit(1);
+        });
+
         assert_eq!(grammar.name, "test");
         assert_eq!(grammar.rules.len(), 2);
     }
@@ -358,7 +366,14 @@ mod tests {
             }
         }"#;
 
-        let grammar = parse_grammar(json).unwrap();
+        let grammar = parse_grammar(json).unwrap_or_else(|e| {
+            if let GrammarError::JsonParse(inner) = e {
+                eprintln!("JSON parse error:\n{}", inner);
+            } else {
+                eprintln!("Grammar error: {}", e);
+            }
+            std::process::exit(1);
+        });
         let expr_rule = grammar.rules.get("expr").unwrap();
         assert_eq!(expr_rule.precedence(), Some(1));
         assert!(matches!(expr_rule.rule_type, RuleType::PrecLeft));
