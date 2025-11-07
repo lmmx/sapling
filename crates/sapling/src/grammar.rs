@@ -17,6 +17,8 @@ use std::collections::HashMap;
 /// both syntactic and semantic scaffolding (rules, precedence, conflicts,
 /// and contextual hints) that together define a language's formal structure.
 ///
+/// Only the `name` and `rules` fields are required.
+///
 /// See <https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json>
 #[derive(Debug, Clone, Facet)]
 pub struct Grammar {
@@ -26,18 +28,26 @@ pub struct Grammar {
     pub schema: Option<String>,
 
     /// The short name of the grammar (e.g. `"javascript"` or `"rust"`).
-    pub name: String,
+    pub name: String, // required: no default null
 
     /// Optional name of a base grammar that this one inherits from.
     #[facet(default)]
     pub inherits: Option<String>,
 
     /// Map of all rule identifiers to their corresponding definitions.
-    pub rules: HashMap<String, Rule>,
+    pub rules: HashMap<String, Rule>, // required: no default null
 
     /// “Extras” that may appear between other tokens, such as whitespace or comments.
     #[facet(default)]
     pub extras: Option<Vec<Rule>>,
+
+    /// Precedence declarations that control operator binding order.
+    #[facet(default)]
+    pub precedences: Option<Vec<Vec<Precedence>>>,
+
+    /// Context-specific reserved word definitions.
+    #[facet(default)]
+    pub reserved: Option<HashMap<String, Vec<Rule>>>,
 
     /// Rules implemented externally via a scanner.
     #[facet(default)]
@@ -47,17 +57,9 @@ pub struct Grammar {
     #[facet(default)]
     pub inline: Option<Vec<String>>,
 
-    /// Precedence declarations that control operator binding order.
-    #[facet(default)]
-    pub precedences: Option<Vec<Vec<Precedence>>>,
-
     /// Explicit conflict groups expected during parsing.
     #[facet(default)]
     pub conflicts: Option<Vec<Vec<String>>>,
-
-    /// Context-specific reserved word definitions.
-    #[facet(default)]
-    pub reserved: Option<HashMap<String, Vec<Rule>>>,
 
     /// The special rule name used to identify word tokens (keywords, identifiers, etc.).
     #[facet(default)]
