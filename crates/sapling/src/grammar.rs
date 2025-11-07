@@ -77,8 +77,12 @@ pub enum Precedence {
     /// A literal precedence string.
     String(String),
 
-    /// A symbolic precedence name.
-    Symbol {
+    /// A symbolic precedence reference.
+    SymbolRule {
+        /// The discriminant identifying this as a SYMBOL rule.
+        /// This field will always be RuleType::Symbol
+        #[facet(rename = "type")]
+        rule_type: RuleType, // will always be RuleType::Symbol
         /// The identifier of the referenced symbol.
         name: String,
     },
