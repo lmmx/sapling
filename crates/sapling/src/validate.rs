@@ -26,7 +26,7 @@ impl ValidationError {
     }
 }
 
-/// Performs semantic validation of a parsed [`Grammar`](crate::grammar::Grammar).
+/// Performs semantic validation of a parsed [`Grammar`].
 ///
 /// This function runs several consistency passes over the grammar:
 ///
@@ -81,10 +81,8 @@ fn check_rule_symbols(
         }
 
         RuleType::Choice | RuleType::Seq => {
-            if let Some(members) = &rule.members {
-                for member in members {
-                    check_rule_symbols(member, defined, context)?;
-                }
+            for member in &rule.members {
+                check_rule_symbols(member, defined, context)?;
             }
         }
 
@@ -158,10 +156,8 @@ fn collect_referenced_symbols(rule: &Rule, symbols: &mut Vec<String>) {
         }
 
         RuleType::Choice | RuleType::Seq => {
-            if let Some(members) = &rule.members {
-                for member in members {
-                    collect_referenced_symbols(member, symbols);
-                }
+            for member in &rule.members {
+                collect_referenced_symbols(member, symbols);
             }
         }
 
@@ -210,25 +206,15 @@ fn has_immediate_left_recursion(rule: &Rule, target: &str) -> bool {
             false
         }
 
-        RuleType::Seq => {
-            if let Some(members) = &rule.members {
-                members
-                    .first()
-                    .is_some_and(|first| has_immediate_left_recursion(first, target))
-            } else {
-                false
-            }
-        }
+        RuleType::Seq => rule
+            .members
+            .first()
+            .is_some_and(|first| has_immediate_left_recursion(first, target)),
 
-        RuleType::Choice => {
-            if let Some(members) = &rule.members {
-                members
-                    .iter()
-                    .any(|member| has_immediate_left_recursion(member, target))
-            } else {
-                false
-            }
-        }
+        RuleType::Choice => rule
+            .members
+            .iter()
+            .any(|member| has_immediate_left_recursion(member, target)),
 
         RuleType::Prec
         | RuleType::PrecLeft
@@ -275,10 +261,8 @@ fn collect_precedence_levels(rule: &Rule, levels: &mut HashMap<String, Vec<i32>>
         }
 
         RuleType::Choice | RuleType::Seq => {
-            if let Some(members) = &rule.members {
-                for member in members {
-                    collect_precedence_levels(member, levels, context);
-                }
+            for member in &rule.members {
+                collect_precedence_levels(member, levels, context);
             }
         }
 
